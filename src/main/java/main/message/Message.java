@@ -5,7 +5,7 @@ import main.app.User;
 
 public class Message {
 
-    public static final int SEND_TO_DEFAULT = 0;
+    public static final String SEND_TO_DEFAULT = "UNKNOWN";
     public static final String SENDER_NAME_DEFAULT = "UNKNOWN";
     public static final String DEFAULT_MESSAGE = "DEFAULT_MESSAGE";
 
@@ -14,34 +14,29 @@ public class Message {
     private String senderName;
     private String meta;
     private String version;
-    private int sendToID;
+    private String sendToID;
 
-
-    public Message(String senderName, String content) {
-        this.
-                setSenderName(senderName)
-                .setContent(content)
+    public Message(String content, String sendToID) {
+        this.setContent(content)
+                .setSenderName(Settings.USER_ID)
                 .setVersion(Settings.VERSION)
+                .setDestination(sendToID)
                 .build();
     }
 
-    public Message(String senderName) {
-        this(senderName, DEFAULT_MESSAGE);
-    }
-
-    protected Message() {
-        this(SENDER_NAME_DEFAULT, DEFAULT_MESSAGE);
-    }
-
-    public Message(User user) {
-        this(user.getName(), DEFAULT_MESSAGE);
+    public Message() {
+        this.setContent(DEFAULT_MESSAGE)
+                .setSenderName(SENDER_NAME_DEFAULT)
+                .setVersion(Settings.VERSION)
+                .setDestination(SENDER_NAME_DEFAULT)
+                .build();
     }
 
     public String getContent() {
         return content;
     }
 
-    public Message setVersion(String version) {
+    protected Message setVersion(String version) {
         this.version = version;
         return this;
     }
@@ -60,16 +55,20 @@ public class Message {
         return this;
     }
 
+    public boolean isClosingMessage() {
+        return content.equals(Header.CLOSE_CONNECTION);
+    }
+
     private Message setMeta() {
         this.meta = Header.START_OF_MESSAGE + Header.SEPARATOR +
-                Settings.VERSION + Header.SEPARATOR +
+                version + Header.SEPARATOR +
                 senderName + Header.SEPARATOR +
                 sendToID + Header.SEPARATOR +
-                Header.END_OF_MESSAGE+ Header.SEPARATOR;
+                Header.END_OF_MESSAGE + Header.SEPARATOR;
         return this;
     }
 
-    public Message setDestination(int sendToID) {
+    public Message setDestination(String sendToID) {
         this.sendToID = sendToID;
         return this;
     }
@@ -80,12 +79,6 @@ public class Message {
 
     @Override
     public String toString() {
-        return "Message{" +
-                "app version='" + version + '\'' +
-                "content='" + content + '\'' +
-                ", senderName='" + senderName + '\'' +
-                ", header='" + meta + '\'' +
-                ", sendToID=" + sendToID +
-                '}';
+        return this.meta + this.content;
     }
 }

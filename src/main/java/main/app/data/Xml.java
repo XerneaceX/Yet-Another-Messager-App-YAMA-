@@ -35,6 +35,26 @@ public class Xml {
         return "User not found";
     }
 
+    public String getDefaultUserName() {
+        NodeList nl = doc.getElementsByTagName("user");
+        for (int i = 0; i < nl.getLength(); i++) {
+            if (nl.item(i).getAttributes().getNamedItem("default").getNodeValue().equals("true")) {
+                return nl.item(i).getAttributes().getNamedItem("name").getNodeValue();
+            }
+        }
+        return "No default user";
+    }
+
+    public String getDefaultUserId() {
+        NodeList nl = doc.getElementsByTagName("user");
+        for (int i = 0; i < nl.getLength(); i++) {
+            if (nl.item(i).getAttributes().getNamedItem("default").getNodeValue().equals("true")) {
+                return nl.item(i).getAttributes().getNamedItem("id").getNodeValue();
+            }
+        }
+        return "No default user";
+    }
+
     private String getKey(String id, String type) {
         NodeList nl = doc.getElementsByTagName("key");
         for (int i = 0; i < nl.getLength(); i++) {
@@ -58,9 +78,13 @@ public class Xml {
         return nl.item(0).getAttributes().getNamedItem("version").getNodeValue();
     }
 
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        Xml xml = new Xml();
-        System.out.println(xml.getPrivateKey("u1"));
-        System.out.println(xml.getVersion());
+    public String getHost() {
+        NodeList nl = doc.getElementsByTagName("server");
+        return nl.item(0).getAttributes().getNamedItem("ip").getNodeValue();
+    }
+
+    public String getPort() {
+        NodeList nl = doc.getElementsByTagName("server");
+        return nl.item(0).getAttributes().getNamedItem("port").getNodeValue();
     }
 }
